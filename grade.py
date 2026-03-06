@@ -52,6 +52,8 @@ def main():
         r_df=ref.filter_data(ref.load_data(DATA_PATH),START_DATE)
         r_fc=ref.get_feature_columns(r_df); t1=[(0,8,f"fatal: {e}")]
     tasks.append(("Task 1: Data Loading", t1))
+    if r_fc is None:
+        r_fc = ref.get_feature_columns(r_df)
 
     print("[2] EDA ...")
     try: t2=test_task2(s_eda, ref, r_df, r_fc)
