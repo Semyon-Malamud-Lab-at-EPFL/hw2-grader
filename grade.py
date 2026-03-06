@@ -9,8 +9,19 @@ import numpy as np
 import reference as ref
 from tests import (test_task1, test_task2, test_task3, test_task4,
                    test_task5, test_task6, test_task7)
-from config import (N_TRAIN, SHRINKAGE_LIST, ALPHA_LASSO,
-                    DATA_PATH, TARGET_COL, START_DATE)
+
+import importlib.util
+_spec = importlib.util.spec_from_file_location("student_config",
+            os.path.join(STUDENT, "config.py"))
+_student_cfg = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_student_cfg)
+
+N_TRAIN        = _student_cfg.N_TRAIN
+SHRINKAGE_LIST = _student_cfg.SHRINKAGE_LIST
+ALPHA_LASSO    = _student_cfg.ALPHA_LASSO
+DATA_PATH      = _student_cfg.DATA_PATH
+TARGET_COL     = _student_cfg.TARGET_COL
+START_DATE     = _student_cfg.START_DATE
 
 class _Fake:
     def __getattr__(self, n):
