@@ -10,7 +10,7 @@ import pandas as pd
 
 # ═══════ Task 1 ═══════
 def load_data(filepath):
-    df = pd.read_csv(filepath)
+    df = pd.read_pickle(filepath)
     df["date"] = pd.to_datetime(df["date"])
     df["yyyymm"] = df["date"].dt.year * 100 + df["date"].dt.month
     return df
