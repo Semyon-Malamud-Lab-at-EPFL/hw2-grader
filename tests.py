@@ -80,7 +80,6 @@ def test_task1(stu, ref, filepath, start_date):
 # ═══════ Task 2 ═══════
 def test_task2(stu, ref, df, features):
     res = []
-    # 2a, 2b: array-valued tasks
     for label, fn, kv, kf in [("2a","count_stocks_per_month","2a_vals","2a_fmt"),
                                 ("2b","mean_return_by_month","2b_vals","2b_fmt"),
                                 ("2c","return_std_by_month","2c_vals","2c_fmt")]:
@@ -94,7 +93,6 @@ def test_task2(stu, ref, df, features):
             fmt = s.shape==r.shape and np.array_equal(s[:,0], r[:,0])
             res.append((POINTS[kf] if fmt else 0, POINTS[kf], f"{label} fmt={fmt}"))
 
-    # 2d: feature-target correlation
     s, e = _call(stu.feature_target_correlation, df, features)
     r = ref.feature_target_correlation(df, features)
     if e or s is None:
@@ -232,21 +230,25 @@ def test_task7(stu, ref, y_pred, y_actual, dates):
         f = _frac(s[:,1], r[:,1], RTOL_MEDIUM, ATOL_MEDIUM) if s.shape==r.shape else 0
         res.append((POINTS["7a_vals"]*f, POINTS["7a_vals"], f"vals {f:.0%}"))
 
+    # use REFERENCE managed returns so grading is independent of 7a
     sp, e = _call(stu.performance_metrics, r)
     rp0 = ref.performance_metrics_ddof0(r)
     rp1 = ref.performance_metrics_ddof1(r)
     if e or sp is None:
         res += _zeros(["7b_mean","7b_vol","7b_sharpe"], str(e))
     else:
+        # mean is same regardless of ddof
         sv = sp.get("mean")
         ok = sv is not None and np.isclose(sv, rp0["mean"], rtol=RTOL_MEDIUM)
         res.append((POINTS["7b_mean"] if ok else 0, POINTS["7b_mean"],
                      f"mean: {sv} vs {rp0['mean']:.6f}"))
+        # vol: accept either ddof
         sv = sp.get("vol")
         ok = sv is not None and (np.isclose(sv, rp0["vol"], rtol=RTOL_MEDIUM)
                                   or np.isclose(sv, rp1["vol"], rtol=RTOL_MEDIUM))
         res.append((POINTS["7b_vol"] if ok else 0, POINTS["7b_vol"],
                      f"vol: {sv}, ref0={rp0['vol']:.6f}, ref1={rp1['vol']:.6f}"))
+        # sharpe: accept either ddof
         sv = sp.get("sharpe")
         ok = sv is not None and (np.isclose(sv, rp0["sharpe"], rtol=RTOL_MEDIUM)
                                   or np.isclose(sv, rp1["sharpe"], rtol=RTOL_MEDIUM))
